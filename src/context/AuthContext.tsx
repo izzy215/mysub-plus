@@ -1,8 +1,17 @@
+// ✅ Provider란?
+// "자식 컴포넌트들에게 데이터를 전달할 수 있는 상위 컴포넌트"
+// 쉽게 말해, 공급자 같은 역할
+
+// 리액트는 원래 부모 → 자식으로 props를 통해 데이터 전달하는데,
+// Provider는 어디서든 쓸 수 있는 전역 데이터를 만들고,
+// 이걸 자식 컴포넌트들이 필요할 때 가져다 쓸 수 있게 해주는 구조
+
 'use client';
 
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
+//
 interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string) => void;
@@ -35,6 +44,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+
+// ✅ useContext란?
+// "Context에서 제공하는 전역 데이터를 가져오는 Hook"
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth는 AuthProvider 안에서만 사용해야 해요');

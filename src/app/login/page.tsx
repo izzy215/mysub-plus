@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '@/context/AuthContext' 
 
 export default function LoginPage() {
   // 이메일 상태
@@ -9,10 +10,13 @@ export default function LoginPage() {
   //비밀번호 상태
   const [password, setPassword] = useState('');
 
+  const { login } = useAuth(); // 훅으로 login 가져오기
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('로그인 시도:', email, password);
     // 실제 로그인 처리 로직은 나중에 추가
+    login(email, password); // 로그인 상태로 변경 + /dashboard 리디렉션
   };
 
   return (
