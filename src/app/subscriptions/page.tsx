@@ -11,16 +11,37 @@ interface Subscription {
   }
 export default function SubscriptionsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedSub, setSelectedSub] = useState<Subscription | null>(null);
 
+    // 구독추가
     const handleAddSubscription = (name: string, price: number) => {
     const newSubscription = {
         id: subscriptions.length + 1,
         name,
         price,
-    };
+      };
     setSubscriptions([...subscriptions, newSubscription]);
     };
 
+    //구독 수정
+    const handleUpdateSubscription = (name: string, price: number) => {
+      if (!selectedSub) return;
+  
+      const updatedSubscriptions = subscriptions.map((sub) =>
+        sub.id === selectedSub.id ? { ...sub, name, price } : sub
+      );
+  
+      setSubscriptions(updatedSubscriptions);
+      setSelectedSub(null);
+      setIsModalOpen(false);
+    };
+  
+    //구독수정 클릭시 모달창 오픈
+    const handleEditClick = (sub: Subscription) => {
+      setSelectedSub(sub);
+      setIsModalOpen(true);
+    };
+    
 
     const [subscriptions, setSubscriptions] = useState<Subscription[]>([
         { id: 1, name: '넷플릭스', price: 9500 },
@@ -28,6 +49,7 @@ export default function SubscriptionsPage() {
         { id: 3, name: '디즈니+', price: 7900 },
       ]);
 
+  //구독삭제
   const handleDelete = (id: number) => {
     setSubscriptions(subscriptions.filter(sub => sub.id !== id));
   };
@@ -45,6 +67,12 @@ export default function SubscriptionsPage() {
               <li key={sub.id} className="border-b py-2 flex justify-between">
                 <span>{sub.name}</span>
                 <span>₩{sub.price.toLocaleString()}</span>
+                <button
+                    onClick={() => handleEditClick(sub)}
+                    className="mr-2 text-blue-500"
+                  >
+                    수정
+                </button>
                 <button
                   onClick={() => handleDelete(sub.id)}
                   className="ml-4 text-red-500"
@@ -70,7 +98,10 @@ export default function SubscriptionsPage() {
           {/* 구독 추가 버튼 */}
           <div className="mt-6 text-center">
             <button
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => {
+                  setIsModalOpen(true)
+                  setSelectedSub(null)
+                }}
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
                 구독 추가하기
@@ -81,7 +112,9 @@ export default function SubscriptionsPage() {
             {isModalOpen && (
             <SubscriptionModal
                 onClose={() => setIsModalOpen(false)}
-                onSave={handleAddSubscription}
+                onSave={selectedSub ? handleUpdateSubscription : handleAddSubscription}
+                initialName={selectedSub?.name}
+                initialPrice={selectedSub?.price}
             />
             )}
         </div>

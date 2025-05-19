@@ -1,30 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface SubscriptionModalProps {
   onClose: () => void;
   onSave: (name: string, price: number) => void;
+  initialName?: string;
+  initialPrice?: number;
 }
 
-export default function SubscriptionModal({ onClose, onSave }: SubscriptionModalProps) {
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
+export default function SubscriptionModal({
+   onClose, 
+   onSave,
+   initialName = '',
+   initialPrice = 0,
+  }: SubscriptionModalProps) {
+  const [name, setName] = useState(initialName);
+  const [price, setPrice] = useState(initialPrice.toString());
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !price) return;
 
     onSave(name, parseInt(price));
-    setName('');
-    setPrice('');
     onClose();
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded shadow-lg w-80">
-        <h3 className="text-lg font-bold mb-4">구독 추가하기</h3>
+        <h3 className="text-lg font-bold mb-4">{initialName ? '구독 수정하기' : '구독 추가하기'}</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm">서비스명</label>
