@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+import { FirebaseError } from 'firebase/app'
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -16,8 +17,12 @@ export default function SignUpPage() {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       router.push('/login'); // 회원가입 성공 후 로그인 페이지로 이동
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if ( err instanceof FirebaseError) {
+        setError('로그인 실패: ' + err.message);
+      } else {
+        setError('알 수 없는 에러가 발생했습니다.')
+      }
     }
   };
 
