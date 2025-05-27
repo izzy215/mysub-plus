@@ -9,6 +9,8 @@ import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import SubscriptionModal from '@/components/SubscriptionModal';
+import SubscriptionCarousel from '@/components/SubscriptionCarousel';
+
 
 interface Subscription {
     id: string;
@@ -175,6 +177,11 @@ export default function SubscriptionsPage() {
         </div>
         
       </div>
+
+
+      {/* 구독 리스트 아래에 추가 */}
+      <SubscriptionCarousel />
+
     </ProtectedRoute>
   );
 }

@@ -74,6 +74,8 @@ const total = subscriptions.reduce((sum, sub) => sum + sub.price, 0);
         {/* 구독 요약 차트 */}
         <div className="bg-white p-6 rounded shadow mb-6">
           <h3 className="text-lg font-semibold mb-4">월 구독 요약</h3>
+          {subscriptions.length > 0 ? (
+            //구독있을때 차트 렌더링
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -94,8 +96,15 @@ const total = subscriptions.reduce((sum, sub) => sum + sub.price, 0);
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
+            </div>
+            ) : (
+           //  구독이 없을 때 안내 메시지
+            <div className="text-gray-500 text-sm h-64 flex items-center justify-center">
+              등록된 구독이 없습니다 😅
+            </div>
+          )}
           </div>
-        </div>
+        
 
         <p className="mt-4 text-sm text-gray-600">
             총 월 구독 금액: <strong>₩{total.toLocaleString()}</strong>
