@@ -31,7 +31,7 @@ export default function DashboardPage() {
   }));
 
   return (
-    <ProtectedRoute>
+    <ProtectedRoute>  
       <div className="text-center py-10">
         <h2 className="text-2xl font-bold mb-6">대시보드</h2>
         <p className="mb-4">로그인 성공! 🎉</p>

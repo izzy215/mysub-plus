@@ -17,6 +17,7 @@ export default function LoginPage() {
       await signInWithEmailAndPassword(auth, email, password);
       console.log('로그인 성공');
       router.push('/dashboard');
+      console.log('dashboard 이동')
     } catch (err: any) {
       setError('로그인 실패: ' + err.message);
     }
