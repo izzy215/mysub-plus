@@ -26,6 +26,7 @@ export default function LoginPage() {
       setError('알 수 없는 에러가 발생했습니다.')
     }
   };
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
