@@ -1,37 +1,75 @@
 'use client';
 
-import { useState } from 'react';
+import { db } from '@/lib/firebase';
+import { addDoc, collection, updateDoc , deleteDoc, doc, onSnapshot , query, where } from 'firebase/firestore';
+import { auth } from '@/lib/firebase';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
+
+import Link from 'next/link';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import SubscriptionModal from '@/components/SubscriptionModal';
 
 interface Subscription {
-    id: number;
+    id: string;
     name: string;
     price: number;
   }
 export default function SubscriptionsPage() {
+    const { logout } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
     const [selectedSub, setSelectedSub] = useState<Subscription | null>(null);
 
+  // Firestore에서 구독 목록 실시간 불러오기
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const q = query(
+      collection(db, 'subscriptions'),
+      where('uid', '==', user.uid)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Subscription[];
+
+      setSubscriptions(data);
+    });
+
+    console.log('unsubscribe',unsubscribe)
+
+    return () => unsubscribe(); // cleanup
+  }, []);
+
     // 구독추가
-    const handleAddSubscription = (name: string, price: number) => {
-    const newSubscription = {
-        id: subscriptions.length + 1,
+    const handleAddSubscription = async (name: string, price: number) => {
+      const user = auth.currentUser;
+      if(!user) return;
+
+      await addDoc(collection(db, 'subscriptions'), {
+        uid: user.uid,
         name,
         price,
-      };
-    setSubscriptions([...subscriptions, newSubscription]);
+        createAt: new Date(),
+      })
+
+       
     };
 
     //구독 수정
-    const handleUpdateSubscription = (name: string, price: number) => {
+    const handleUpdateSubscription = async (name: string, price: number) => {
       if (!selectedSub) return;
   
-      const updatedSubscriptions = subscriptions.map((sub) =>
-        sub.id === selectedSub.id ? { ...sub, name, price } : sub
-      );
-  
-      setSubscriptions(updatedSubscriptions);
+      const docRef = doc(db, 'subscriptions', selectedSub.id);
+      await updateDoc(docRef, {
+        name,
+        price,
+      });
+
       setSelectedSub(null);
       setIsModalOpen(false);
     };
@@ -43,19 +81,36 @@ export default function SubscriptionsPage() {
     };
     
 
-    const [subscriptions, setSubscriptions] = useState<Subscription[]>([
-        { id: 1, name: '넷플릭스', price: 9500 },
-        { id: 2, name: '스포티파이', price: 10000 },
-        { id: 3, name: '디즈니+', price: 7900 },
-      ]);
+    // const [subscriptions, setSubscriptions] = useState<Subscription[]>([
+    //     { id: 1, name: '넷플릭스', price: 9500 },
+    //     { id: 2, name: '스포티파이', price: 10000 },
+    //     { id: 3, name: '디즈니+', price: 7900 },
+    //   ]);
 
   //구독삭제
-  const handleDelete = (id: number) => {
-    setSubscriptions(subscriptions.filter(sub => sub.id !== id));
+  const handleDelete = async (id: string) => {
+    await deleteDoc(doc(db, 'subscriptions', id));
   };
+  
 
   return (
     <ProtectedRoute>
+      <div className="flex justify-end gap-4 mb-4">
+        <Link href="/dashboard">
+          <button
+            className="bg-gray-100 text-sm px-3 py-1 rounded hover:bg-gray-200"
+          >
+            대시보드
+          </button>
+        </Link>
+        <button
+          onClick={logout}
+          className="bg-red-500 text-white text-sm px-3 py-1 rounded hover:bg-red-600"
+        >
+          로그아웃
+        </button>
+      </div>  
+       
       <div className="max-w-2xl mx-auto py-10">
         <h2 className="text-2xl font-bold mb-6">내 구독 관리</h2>
 
@@ -106,8 +161,8 @@ export default function SubscriptionsPage() {
             >
                 구독 추가하기
             </button>
-            </div>
-
+          </div>
+         
             {/* 조건부 렌더링  */}
             {isModalOpen && (
             <SubscriptionModal
@@ -118,6 +173,7 @@ export default function SubscriptionsPage() {
             />
             )}
         </div>
+        
       </div>
     </ProtectedRoute>
   );
