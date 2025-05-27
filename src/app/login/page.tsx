@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+import { FirebaseError } from 'firebase/app'
 
 export default function LoginPage() {
   const router = useRouter();
@@ -18,8 +19,11 @@ export default function LoginPage() {
       console.log('로그인 성공');
       router.push('/dashboard');
       console.log('dashboard 이동')
-    } catch (err: any) {
+    } catch (err :unknown) {
+    if ( err instanceof FirebaseError) {
       setError('로그인 실패: ' + err.message);
+    } else {
+      setError('알 수 없는 에러가 발생했습니다.')
     }
   };
 
