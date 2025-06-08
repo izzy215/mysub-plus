@@ -175,12 +175,12 @@ export default function SubscriptionsPage() {
             />
             )}
         </div>
+      {/* 구독 리스트 아래에 추가 */}
+      {!isModalOpen && <SubscriptionCarousel />}  
         
       </div>
 
 
-      {/* 구독 리스트 아래에 추가 */}
-      <SubscriptionCarousel />
 
     </ProtectedRoute>
   );

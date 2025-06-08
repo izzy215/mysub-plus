@@ -27,7 +27,7 @@ export default function SubscriptionModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded shadow-lg w-80">
         <h3 className="text-lg font-bold mb-4">{initialName ? '구독 수정하기' : '구독 추가하기'}</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
