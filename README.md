@@ -31,6 +31,8 @@
 ## 📸 데모
 
 👉 [배포 링크]https://mysub-plus-mnd97nsma-izzy215s-projects.vercel.app/login
+테스트 아이디 : a@a.com
+테스트 비밀번호 : 123456
 
 
 
